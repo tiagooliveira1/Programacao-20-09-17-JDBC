@@ -1,0 +1,13 @@
+create table funcionario(
+  idfuncionario number(6),
+  nome varchar2(100),
+  salario number(14,2),
+  tipo number(6),
+  constraint pk_idfuncionario PRIMARY KEY (idfuncionario)
+  
+);
+
+
+insert into funcionario values ( coalesce((select max(idfuncionario) from funcionario)+1,1),1500.00,1,'João' );
+insert into funcionario values ( coalesce((select max(idfuncionario) from funcionario)+1,1),3251.00,2,'Marcelo' );
+insert into funcionario values ( coalesce((select max(idfuncionario) from funcionario)+1,1),6250.00,3,'Gerentão' );
