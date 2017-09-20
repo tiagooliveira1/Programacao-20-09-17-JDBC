@@ -2,6 +2,7 @@ package opet.tds171a.main;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -29,6 +30,18 @@ public class MainPessoas {
 			Connection connection = DriverManager.getConnection(DB_URL, DB_USUARIO, DB_PASS);
 			System.out.println("Conectado!");
 			
+			PreparedStatement pstmt = connection.prepareStatement(
+					"INSERT INTO FUNCIONARIO (IDFUNCIONARIO, NOME, SALARIO, TIPO) values ("
+					+ "(select max(idfuncionario)+1 from funcionario), "
+					+ "?,?,?)"
+					);
+			pstmt.setString(1, "TiagoABC");
+			pstmt.setDouble(2, 9952.33);
+			pstmt.setInt(3, 3);
+			//pstmt.executeUpdate();
+			pstmt.execute(); // precisou colocar execute pq uso select para achar novo id
+			
+			
 			connection.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -37,6 +50,7 @@ public class MainPessoas {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 		
 		arrFuncionarios = new ArrayList<Funcionario>();
