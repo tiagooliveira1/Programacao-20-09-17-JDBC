@@ -133,18 +133,16 @@ public class MainPessoas {
 			while( rs.next() ) {
 				
 				System.out.println(rs.getString("nome"));
-				
+				Funcionario func;
 				// verifica qual o tipo do funcionário retornado, e cria o objeto correspondete
 				if(rs.getInt("tipo") == 3) {
-					Professor func = new Professor(rs.getString("nome"), rs.getDouble("salario") );
-					arrFuncionarios.add(func);
+					func = new Professor(rs.getString("nome"), rs.getDouble("salario") );
 				} else if(rs.getInt("tipo") == 2) {
-					Secretario func = new Secretario(rs.getString("nome"), rs.getDouble("salario") );
-					arrFuncionarios.add(func);
+					func = new Secretario(rs.getString("nome"), rs.getDouble("salario") );
 				} else {
-					Diretor func = new Diretor(rs.getString("nome"), rs.getDouble("salario") );
-					arrFuncionarios.add(func);
+					func = new Diretor(rs.getString("nome"), rs.getDouble("salario") );
 				}
+				arrFuncionarios.add(func);
 			}
 			
 			rs.close();
