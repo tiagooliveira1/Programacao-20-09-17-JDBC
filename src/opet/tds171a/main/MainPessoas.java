@@ -3,6 +3,7 @@ package opet.tds171a.main;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -21,6 +22,9 @@ public class MainPessoas {
 
 	public static void main(String[] args) {
 
+		arrFuncionarios = new ArrayList<Funcionario>();
+		
+		
 		Funcionario func = new Professor("João Andrei", 2580.22);
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -78,7 +82,8 @@ public class MainPessoas {
 			connection = DriverManager.getConnection(DB_URL, DB_USUARIO, DB_PASS);
 			System.out.println("OK");
 
-			pstmt = connection.prepareStatement("UPDATE FUNCIONARIO SET NOME = ?, SALARIO = ? WHERE IDFUNCIONARIO = ? ");
+			pstmt = connection
+					.prepareStatement("UPDATE FUNCIONARIO SET NOME = ?, SALARIO = ? WHERE IDFUNCIONARIO = ? ");
 			pstmt.setString(1, "Novo nome do cidadão");
 			pstmt.setDouble(2, 1455.99);
 			pstmt.setInt(3, 11);
@@ -88,10 +93,16 @@ public class MainPessoas {
 			if (pstmt != null)
 				pstmt.close();
 
-			System.out.print("Desconectando...");
+			
+			// implementando Select 
+			recuperarFuncionarios(connection);
 			if (connection != null)
 				connection.close();
-			System.out.println("OK");
+			pstmt = null;
+			connection = null;
+			
+			
+			
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -101,14 +112,49 @@ public class MainPessoas {
 			e.printStackTrace();
 		}
 
-		arrFuncionarios = new ArrayList<Funcionario>();
+		
 
-		popularFuncionario();
+		//popularFuncionario();
 
-		listarFuncionarios();
+		//listarFuncionarios();
 
 	}
 
+	/**
+	 *  Recupera via Select no banco, cria os objetos das classes corretas e já insere no arrayList
+	 * @param conn
+	 */
+	public static void recuperarFuncionarios(Connection conn) {
+		PreparedStatement pstmt;
+		try {
+			pstmt = conn
+					.prepareStatement("SELECT * FROM FUNCIONARIO");
+			ResultSet rs = pstmt.executeQuery(); 
+			while( rs.next() ) {
+				
+				System.out.println(rs.getString("nome"));
+				
+				// verifica qual o tipo do funcionário retornado, e cria o objeto correspondete
+				if(rs.getInt("tipo") == 3) {
+					Professor func = new Professor(rs.getString("nome"), rs.getDouble("salario") );
+					arrFuncionarios.add(func);
+				} else if(rs.getInt("tipo") == 2) {
+					Secretario func = new Secretario(rs.getString("nome"), rs.getDouble("salario") );
+					arrFuncionarios.add(func);
+				} else {
+					Diretor func = new Diretor(rs.getString("nome"), rs.getDouble("salario") );
+					arrFuncionarios.add(func);
+				}
+			}
+			
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
 	public static void popularFuncionario() {
 
 		Diretor diretor = new Diretor("Paulo", 12500.00);
